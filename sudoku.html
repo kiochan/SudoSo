@@ -1,0 +1,129 @@
+<script>
+
+var sudoku = [
+  4,7,1,0,9,2,0,0,5,
+  0,8,0,4,0,7,0,0,9,
+  0,9,3,0,0,0,0,7,6,
+  0,0,0,0,6,0,9,0,0,
+  0,1,0,0,7,0,0,8,0,
+  0,0,5,0,8,0,0,0,0,
+  1,3,0,0,0,0,2,9,0,
+  0,0,0,3,0,8,0,6,1,
+  6,0,0,1,2,0,0,0,7
+];
+
+var sudokuSolver = function(array) {
+  // find any unknow number;
+  var n;
+  for(n in array) {
+    // 0 is the know number
+    if(0 === array[n]) {
+      // we replace it with a array
+      // with posible number that can be.
+      array[n] = [1,2,3,4,5,6,7,8,9];
+    }
+  }
+  var s = false;
+  var i;
+  var t = 0;
+  while(!s){
+    for(i in array) {
+      // find a exist number
+      if(typeof(array[i]) !== 'object') {
+        // row col box
+        var r = parseInt((i)/9+1);
+        var c = (i+1) % 9; if(0 === c){c = 9;}
+        var b;
+        if (1<=r && r<=3 && 1<=c && c<=3) {b = 1;}
+        if (1<=r && r<=3 && 4<=c && c<=6) {b = 2;}
+        if (1<=r && r<=3 && 7<=c && c<=9) {b = 3;}
+        if (4<=r && r<=6 && 1<=c && c<=3) {b = 4;}
+        if (4<=r && r<=6 && 4<=c && c<=6) {b = 5;}
+        if (4<=r && r<=6 && 7<=c && c<=9) {b = 6;}
+        if (7<=r && r<=9 && 1<=c && c<=3) {b = 7;}
+        if (7<=r && r<=9 && 4<=c && c<=6) {b = 8;}
+        if (7<=r && r<=9 && 7<=c && c<=9) {b = 9;}
+        var j;
+        for(j in array) {
+          // find unknow number
+          if(typeof(array[j]) === 'object') {
+            var rr = parseInt((j)/9+1);
+            var cc = (j+1) % 9; if(0 === cc){cc = 9;}
+            var bb;
+            if (1<=rr && rr<=3 && 1<=cc && cc<=3) {bb = 1;}
+            if (1<=rr && rr<=3 && 4<=cc && cc<=6) {bb = 2;}
+            if (1<=rr && rr<=3 && 7<=cc && cc<=9) {bb = 3;}
+            if (4<=rr && rr<=6 && 1<=cc && cc<=3) {bb = 4;}
+            if (4<=rr && rr<=6 && 4<=cc && cc<=6) {bb = 5;}
+            if (4<=rr && rr<=6 && 7<=cc && cc<=9) {bb = 6;}
+            if (7<=rr && rr<=9 && 1<=cc && cc<=3) {bb = 7;}
+            if (7<=rr && rr<=9 && 4<=cc && cc<=6) {bb = 8;}
+            if (7<=rr && rr<=9 && 7<=cc && cc<=9) {bb = 9;}
+            if(
+              // are they in same row, col or box?
+              rr === r ||
+              cc === c ||
+              bb === b
+            ) {
+              var k;
+              for(k in array[j]){
+                if(array[j][k] === array[i]){
+                  // if the in same row, col or box
+                  // remove the same number
+                  array[j].splice(k, 1);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    s = true; // hypothesis that we already solve that
+    for(i in array) {
+      if(typeof(array[i]) === 'object') {
+        if(array[i].length === 0) {
+          // if array is empty, there is no solution
+          array[i] = 'X';
+        }
+        if(array[i].length > 1) {
+          // if there is any array that length more than 1
+          // we are not solve this sudoku
+          s = false;
+        } else {
+          if(array[i].length === 1) {
+            // if there is only one number in array
+            // we replace that with this number
+            // then test this again
+            array[i] = array[i][0];
+            s = false;
+            break;
+          }
+        }
+      }
+    }
+    t++;
+    // if more than 9*9*9 times to slove this
+    // than there is more than one posible solutions
+    if(t>(9*9*9)) {s = true;}
+  }
+
+  return array;
+};
+
+var obj,output,i;
+var newline = '<br />';
+
+obj = sudoku;
+output = "";
+for(i in obj){
+	var property=obj[i];
+	output += property + ((i+1)%9===0?newline:'');
+}
+output += '---solved---'+newline;
+obj = sudokuSolver(sudoku);
+for(i in obj){
+	var property=obj[i];
+	output += property + ((i+1)%9===0?newline:'');
+}
+document.write(output);
+</script>
